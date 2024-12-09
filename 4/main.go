@@ -11,6 +11,7 @@ import (
 
 func main() {
 
+	// 1875
 	part1("input.txt")
 }
 
@@ -49,7 +50,7 @@ func part1(filename string) {
 		go func(c chan index, results chan int, p [][]rune, wg *sync.WaitGroup) {
 			for {
 				coordinates := <-c
-				count := checkIndex(coordinates.i, coordinates.j, p)
+				count := checkIndexPart2(coordinates.i, coordinates.j, p)
 				results <- count
 				wg.Done()
 			}
@@ -137,6 +138,77 @@ func checkIndex(i, j int, puzzle [][]rune) int {
 		boundedIndex(i+3, j-3, puzzle) == 'S' {
 		count++
 	}
+
+	return count
+}
+
+func checkIndexPart2(i, j int, puzzle [][]rune) int {
+
+	count := 0
+
+	if puzzle[i][j] != 'A' {
+		return 0
+	}
+
+	// Diagonals
+	// M M
+	//  A
+	// S S
+	if boundedIndex(i-1, j-1, puzzle) == 'M' &&
+		boundedIndex(i-1, j+1, puzzle) == 'M' &&
+		boundedIndex(i+1, j-1, puzzle) == 'S' &&
+		boundedIndex(i+1, j+1, puzzle) == 'S' {
+		count++
+	}
+	// S M
+	//  A
+	// S M
+	if boundedIndex(i-1, j+1, puzzle) == 'M' &&
+		boundedIndex(i+1, j+1, puzzle) == 'M' &&
+		boundedIndex(i-1, j-1, puzzle) == 'S' &&
+		boundedIndex(i+1, j-1, puzzle) == 'S' {
+		count++
+	}
+	// M S
+	//  A
+	// M S
+	if boundedIndex(i-1, j-1, puzzle) == 'M' &&
+		boundedIndex(i+1, j-1, puzzle) == 'M' &&
+		boundedIndex(i-1, j+1, puzzle) == 'S' &&
+		boundedIndex(i+1, j+1, puzzle) == 'S' {
+		count++
+	}
+	// S S
+	//  A
+	// M M
+	if boundedIndex(i+1, j-1, puzzle) == 'M' &&
+		boundedIndex(i+1, j+1, puzzle) == 'M' &&
+		boundedIndex(i-1, j-1, puzzle) == 'S' &&
+		boundedIndex(i-1, j+1, puzzle) == 'S' {
+		count++
+	}
+
+	// Apparently these cases are invalid, I guess MAS needs to be spelled in the same direction for the pair.
+	// Adding them in leads to an answer that is too high.
+
+	// S M
+	// 	A
+	// M S
+	//if boundedIndex(i-1, j+1, puzzle) == 'M' &&
+	//	boundedIndex(i+1, j-1, puzzle) == 'M' &&
+	//	boundedIndex(i-1, j-1, puzzle) == 'S' &&
+	//	boundedIndex(i+1, j+1, puzzle) == 'S' {
+	//	count++
+	//}
+	// M S
+	//  A
+	// S M
+	//if boundedIndex(i-1, j-1, puzzle) == 'M' &&
+	//	boundedIndex(i+1, j+1, puzzle) == 'M' &&
+	//	boundedIndex(i-1, j+1, puzzle) == 'S' &&
+	//	boundedIndex(i+1, j-1, puzzle) == 'S' {
+	//	count++
+	//}
 
 	return count
 }
